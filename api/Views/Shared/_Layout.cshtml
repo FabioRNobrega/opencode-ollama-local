@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OpenCode Demo API</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@@tailwindcss/browser@4"></script>
+</head>
+<body data-theme="dark" class="min-h-screen bg-base-200">
+    <main class="mx-auto w-full max-w-5xl p-6">
+        <div class="mb-4 flex justify-end">
+            <label class="toggle text-base-content">
+                <input id="theme-toggle" type="checkbox" />
+                <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M5.64 17.66A9 9 0 1 0 17.66 5.64 7 7 0 1 1 5.64 17.66z" fill="currentColor"></path>
+                </svg>
+                <svg
+                    aria-label="disabled"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2" />
+                    <path d="M12 20v2" />
+                    <path d="m4.93 4.93 1.41 1.41" />
+                    <path d="m17.66 17.66 1.41 1.41" />
+                    <path d="M2 12h2" />
+                    <path d="M20 12h2" />
+                    <path d="m6.34 17.66-1.41 1.41" />
+                    <path d="m19.07 4.93-1.41 1.41" />
+                </svg>
+            </label>
+        </div>
+        @RenderBody()
+    </main>
+
+    <script>
+        (() => {
+            const html = document.documentElement;
+            const body = document.body;
+            const toggle = document.getElementById("theme-toggle");
+            const key = "theme";
+            const stored = localStorage.getItem(key);
+            const initial = stored === "light" ? "light" : "dark";
+
+            html.setAttribute("data-theme", initial);
+            body.setAttribute("data-theme", initial);
+            if (toggle) {
+                toggle.checked = initial === "dark";
+                toggle.addEventListener("change", (event) => {
+                    const isDark = event.target.checked;
+                    const theme = isDark ? "dark" : "light";
+                    html.setAttribute("data-theme", theme);
+                    body.setAttribute("data-theme", theme);
+                    localStorage.setItem(key, theme);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

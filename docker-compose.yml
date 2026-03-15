@@ -1,0 +1,67 @@
+services:
+  # -------------------------------------------
+  # .NET MVC- sandbox
+  # -------------------------------------------
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        APP_UID: ${UID:-1000}
+        APP_GID: ${GID:-1000}
+    container_name: opencode-demo-api
+    user: "0:0"
+    working_dir: /src
+    command: dotnet watch run --urls=http://0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api:/src
+      - dotnet_nuget:/home/dev/.nuget/packages
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      DOTNET_CLI_HOME: /home/dev
+      NUGET_PACKAGES: /home/dev/.nuget/packages
+  # -------------------------------------------
+  # Ollama - local LLM server for OpenCode
+  # -------------------------------------------
+  ollama:
+    image: ollama/ollama:0.17.7
+    container_name: ollama-opencode
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=-1
+      - OLLAMA_CONTEXT_LENGTH=${OLLAMA_CONTEXT_LENGTH:-64000}
+    restart: unless-stopped
+    entrypoint: /bin/bash
+    command: -lc "ollama serve & sleep 8 && ollama pull ${OLLAMA_MODEL:-qwen3.5:0.8b} && wait"
+
+  # -------------------------------------------
+  # OpenCode
+  # -------------------------------------------
+  opencode:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opencode
+    working_dir: /workspace
+    volumes:
+      - ../:/workspace
+      - ./opencode.json:/root/.config/opencode/opencode.json:ro
+    environment:
+      - OPENCODE_CONFIG=/root/.config/opencode/opencode.json
+    depends_on:
+      - ollama
+    stdin_open: true
+    tty: true
+    command: ["bash", "-lc", "tail -f /dev/null"]
+
+
+volumes:
+  ollama_models:
+  opencode:
+  dotnet_nuget:

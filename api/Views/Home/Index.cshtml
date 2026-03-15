@@ -1,0 +1,28 @@
+@model Api.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="card bg-base-100 shadow-2xl">
+    <div class="card-body gap-6">
+        <div>
+            <h1 class="card-title text-3xl font-bold">@Model.Name</h1>
+            <p class="text-base-content/70">ASP.NET MVC Home</p>
+        </div>
+
+        <div class="stats stats-vertical shadow sm:stats-horizontal">
+            <div class="stat">
+                <div class="stat-title">Status</div>
+                <div class="stat-value text-success">@Model.Status</div>
+            </div>
+            <div class="stat">
+                <div class="stat-title">Time (UTC)</div>
+                <div class="stat-value text-lg sm:text-2xl">@Model.Time.ToString("u")</div>
+            </div>
+        </div>
+
+        <div class="card-actions justify-end">
+            <a href="/health" class="btn btn-primary btn-sm">Health</a>
+        </div>
+    </div>
+</section>
